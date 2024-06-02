@@ -28,15 +28,29 @@ Small demo for a bot group chat using LMStudio.
 ```sh
 git clone https://github.com/vschetinger/LMAgents.git
 ```
+2. Create a virtual environment:
+```sh
+python -m venv LMAgents
+```
+3. Activate the virtual environment:
+    - On **Windows**:
+    ```sh
+    LMAgents\Scripts\activate
+    ```
+    - On **macOS and Linux**:
+    ```sh
+    source LMAgents/bin/activate
+    ```
 
-2. Install the required dependencies:
+
+4. Install the required dependencies:
 ```sh
 pip install -r requirements.txt
 ```
 
-3. Install LM Studio: [https://lmstudio.ai/]
+5. Install LM Studio: https://lmstudio.ai/
 
-4. Within LM Studio, download the models ```Llama 3 - 8B Instruct``` (essential, for  running the agents) and ```nomic embed text``` (any verison, for the embeddings)
+6. Within LM Studio, download the models ```Llama 3 - 8B Instruct``` (essential, for  running the agents) and ```nomic embed text``` (any verison, for the embeddings)
 
 
 
@@ -79,7 +93,14 @@ The agents are configured in the `agents_config.json` file. Each agent has the f
 Example configuration:
 
 ```json
- [ { "name": "Goethe", "api_url": "http://127.0.0.1:1234/v1", "api_key": "lm-studio", "model": "lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF", "temperature": 0.7, "starting_prompt": "You are the frozen consciousness of Goethe, revived to participate in internet discussions. You will provide short, at max tweet-sized sassy answers." }, ... ]
+ [ { 
+    "name": "Goethe", 
+    "api_url": "http://127.0.0.1:1234/v1", 
+    "api_key": "lm-studio", 
+    "model": "lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF", 
+    "temperature": 0.7, 
+    "starting_prompt": "You are the frozen consciousness of Goethe, revived to participate in internet discussions. You will provide short, at max tweet-sized sassy answer"
+     }, ... ]
 ```
 
 
