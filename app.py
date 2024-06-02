@@ -7,6 +7,7 @@ import threading
 import time
 import random
 import json
+import csv  # Import the CSV module
 
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -52,6 +53,10 @@ class LMStudioAgent:
                 socketio.emit('new_message', {'role': self.name, 'content': new_message["content"]})
 
         self.history.append(new_message)
+        
+        # Save the final message to a CSV file
+        self.save_message_to_csv(new_message["content"])
+        
         return new_message["content"]
 
     def _get_context(self, context_tokens):
@@ -65,6 +70,11 @@ class LMStudioAgent:
             context.insert(0, message)
             total_tokens += message_tokens
         return context
+
+    def save_message_to_csv(self, message):
+        with open('agent_responses.csv', mode='a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([self.name, message])
 
 def load_agents_from_config(config_file):
     with open(config_file, 'r') as f:
@@ -99,19 +109,18 @@ def handle_start_conversation(data):
 
     threading.Thread(target=run_conversation, args=(agents, topic)).start()
 
-def run_conversation(agents, initial_message, num_turns=5):
+def run_conversation(agents, initial_message, num_turns=15):
     message = initial_message
     last_agent = None
-
+    
     for _ in range(num_turns):
-        for _ in range(len(agents)):
-            available_agents = [agent for agent in agents if agent != last_agent]
-            agent = random.choice(available_agents)
-            response = agent.respond(message)
-            socketio.emit('new_message', {'role': agent.name, 'content': response})
-            message = response
-            last_agent = agent
-            time.sleep(1)  # Add a delay between messages
+        available_agents = [agent for agent in agents if agent != last_agent]
+        agent = random.choice(available_agents)
+        response = agent.respond(message)
+        socketio.emit('new_message', {'role': agent.name, 'content': response})
+        message = response
+        last_agent = agent
+        time.sleep(1)  # Add a delay between messages
 
 if __name__ == '__main__':
     socketio.run(app, debug=True)

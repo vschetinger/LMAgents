@@ -1,1 +1,3 @@
 LMAgents/
+*.csv
+.DS_Store
