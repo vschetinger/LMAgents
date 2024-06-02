@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Agent Chat</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <style>
+        .message {
+            margin-bottom: 10px;
+        }
+        #chat {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat with Agents</h1>
+    <div id="chat"></div>
+    <input type="text" id="topic_input" placeholder="Enter a topic..." autocomplete="off"/>
+    <button onclick="startConversation()">Start Conversation</button>
+
+    <script>
+        var socket = io.connect('http://127.0.0.1:5000');
+        var currentMessageContainer = null;
+        var currentRole = null;
+
+        socket.on('new_message', function(msg) {
+            var chat = document.getElementById('chat');
+
+            // Check if the role has changed or if there is no current message container
+            if (currentRole !== msg.role || !currentMessageContainer) {
+                // Create a new message container for each new message
+                currentMessageContainer = document.createElement('div');
+                currentMessageContainer.className = 'message';
+                chat.appendChild(currentMessageContainer);
+                currentRole = msg.role;
+            }
+
+            // Update the current message container with the new content
+            currentMessageContainer.textContent = `${msg.role}: ${msg.content}`;
+            chat.scrollTop = chat.scrollHeight;  // Scroll to the bottom
+        });
+
+        function startConversation() {
+            var input = document.getElementById('topic_input');
+            var topic = input.value;
+            socket.emit('start_conversation', {topic: topic});
+            input.value = '';
+        }
+    </script>
+</body>
+</html>
